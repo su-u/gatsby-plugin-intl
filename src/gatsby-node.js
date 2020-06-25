@@ -49,7 +49,6 @@ exports.onCreatePage = async ({ page, actions }, pluginOptions) => {
     languages = ["en"],
     defaultLanguage = "en",
     redirect = false,
-    ignoreRedirectUrls = [''],
   } = pluginOptions
 
   const getMessages = (path, language) => {
@@ -61,9 +60,9 @@ exports.onCreatePage = async ({ page, actions }, pluginOptions) => {
     } catch (error) {
       if (error.code === "MODULE_NOT_FOUND") {
         process.env.NODE_ENV !== "test" &&
-          console.error(
-            `[gatsby-plugin-intl] couldn't find file "${path}/${language}.json"`
-          )
+        console.error(
+          `[gatsby-plugin-intl] couldn't find file "${path}/${language}.json"`
+        )
       }
 
       throw error
@@ -71,7 +70,6 @@ exports.onCreatePage = async ({ page, actions }, pluginOptions) => {
   }
 
   const generatePage = (routed, language) => {
-    const isRedirect = !ignoreRedirectUrls.every(url => new RegExp(`^${url}`).test(page.path))
     const messages = getMessages(path, language)
     const newPath = routed ? `/${language}${page.path}` : page.path
     return {
@@ -86,7 +84,7 @@ exports.onCreatePage = async ({ page, actions }, pluginOptions) => {
           messages,
           routed,
           originalPath: page.path,
-          redirect: redirect && isRedirect,
+          redirect,
           defaultLanguage,
         },
       },
